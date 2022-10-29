@@ -4,7 +4,7 @@
   "description": "A library for enforcing interfaces in vanilla JavaScript",
   "main": "index.js",
   "scripts": {
-    "test": "eslint . && prettier --check",
+    "lint": "eslint . && prettier --write .",
     "setup-pre-commit-check": "npx husky install && npx husky add .husky/pre-commit \"npx lint-staged\""
   },
   "repository": {

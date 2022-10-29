@@ -6,3 +6,7 @@
 
 # test directory
 /tester
+
+# package-lock.json
+package-lock.json
+
