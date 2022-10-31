@@ -1,5 +1,5 @@
 {
-  "name": "interfacing",
+  "name": "interfacify",
   "version": "1.0.0",
   "description": "A library for enforcing interfaces in vanilla JavaScript",
   "main": "index.js",
