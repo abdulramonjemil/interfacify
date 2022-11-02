@@ -117,7 +117,7 @@ class FieldType {
       method === allowedMethod
     if (!methodIsAllowed)
       throw new Error(
-        `attribute cannot be set by '${method.description}'. Use other methods instead`
+        `attribute cannot be set by '${method.description.toLowerCase()}'. Use other methods instead`
       )
   }
 
