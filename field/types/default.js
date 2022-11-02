@@ -177,6 +177,10 @@ class FieldType {
     return this.#attributes[attributeName]
   }
 
+  getAttributeSettingMethod() {
+    return this.#ATTRIBUTE_SETTING_METHOD.description.toLowerCase()
+  }
+
   getAttributes() {
     const attributeObjectWithDifferentRef = JSON.parse(
       JSON.stringify(this.#attributes)
