@@ -172,6 +172,12 @@ class FieldType {
     })
   }
 
+  duplicate() {
+    const duplicate = new this.constructor(this.#DETERMINER, this.#attributes)
+    duplicate.#ATTRIBUTE_SETTING_METHOD = this.#ATTRIBUTE_SETTING_METHOD
+    return duplicate
+  }
+
   getAttribute(attributeName) {
     this.#assertAttributeSupport(attributeName)
     return this.#attributes[attributeName]
