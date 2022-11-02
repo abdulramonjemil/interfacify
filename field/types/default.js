@@ -83,10 +83,7 @@ class FieldType {
       this.#attributes[attributeName] =
         FieldType.#VALUE_OF_ATTRIBUTES_AFTER_CHAINING
 
-      if (
-        this.#ATTRIBUTE_SETTING_METHOD ===
-        FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
-      )
+      if (this.#ATTRIBUTE_SETTING_METHOD !== chainingMethod)
         this.#ATTRIBUTE_SETTING_METHOD = chainingMethod
       return this
     }
@@ -203,10 +200,7 @@ class FieldType {
     FieldType.#assertAttributeValueValidity(attribute, value)
     this.#attributes[attribute] = value
 
-    if (
-      this.#ATTRIBUTE_SETTING_METHOD ===
-      FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
-    )
+    if (this.#ATTRIBUTE_SETTING_METHOD !== methodCalling)
       this.#ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
@@ -227,10 +221,7 @@ class FieldType {
         this.#attributes[attributeName] = attributeValueToSet
     })
 
-    if (
-      this.#ATTRIBUTE_SETTING_METHOD ===
-      FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
-    )
+    if (this.#ATTRIBUTE_SETTING_METHOD !== methodCalling)
       this.#ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
