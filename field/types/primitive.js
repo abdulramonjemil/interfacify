@@ -1,5 +1,4 @@
 const FieldType = require("./default")
-const { generateCompareFn } = require("../../lib/functions")
 
 class PrimitiveFieldType extends FieldType {
   static #ADDITIONAL_ATTRIBUTES = [
@@ -14,7 +13,7 @@ class PrimitiveFieldType extends FieldType {
   static SUPPORTED_ATTRIBUTES = [
     ...FieldType.SUPPORTED_ATTRIBUTES,
     ...PrimitiveFieldType.#ADDITIONAL_ATTRIBUTES
-  ].sort(generateCompareFn(["name"]))
+  ]
 
   static SUPPORTED_PRIMITIVES = [
     "any",

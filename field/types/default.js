@@ -1,4 +1,7 @@
-const { firstClassExtendsSecond } = require("../../lib/functions")
+const {
+  firstClassExtendsSecond,
+  generateCompareFn
+} = require("../../lib/functions")
 
 class FieldType {
   static #ATTRIBUTE_SETTING_METHODS = {
@@ -93,6 +96,8 @@ class FieldType {
     }
 
     const chainableAttributes = chainables || classObject.SUPPORTED_ATTRIBUTES
+    chainableAttributes.sort(generateCompareFn(["name"], "asc"))
+
     chainableAttributes.forEach((attribute) => {
       if (!attribute.isChainable) return
       const attributeName = attribute.name
