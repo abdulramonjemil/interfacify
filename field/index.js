@@ -17,13 +17,13 @@ function createReusablePrimitiveFieldType(type) {
 const Field = {}
 
 Field.Types = {
-  string: createReusablePrimitiveFieldType("string"),
-  number: createReusablePrimitiveFieldType("number"),
-  boolean: createReusablePrimitiveFieldType("boolean"),
-  symbol: createReusablePrimitiveFieldType("symbol"),
   bigint: createReusablePrimitiveFieldType("bigint"),
+  boolean: createReusablePrimitiveFieldType("boolean"),
   function: createReusablePrimitiveFieldType("function"),
-  object: createReusablePrimitiveFieldType("object")
+  number: createReusablePrimitiveFieldType("number"),
+  object: createReusablePrimitiveFieldType("object"),
+  string: createReusablePrimitiveFieldType("string"),
+  symbol: createReusablePrimitiveFieldType("symbol")
 }
 
 Field.Indexes = {

@@ -17,13 +17,13 @@ class PrimitiveFieldType extends FieldType {
   ].sort(generateCompareFn(["name"]))
 
   static SUPPORTED_PRIMITIVES = [
-    "string",
-    "number",
-    "boolean",
-    "symbol",
     "bigint",
+    "boolean",
     "function",
-    "object"
+    "number",
+    "object",
+    "string",
+    "symbol"
   ]
 
   constructor(determiner, attributes) {
