@@ -17,6 +17,8 @@ class PrimitiveFieldType extends FieldType {
   ].sort(generateCompareFn(["name"]))
 
   static SUPPORTED_PRIMITIVES = [
+    "any",
+    "array",
     "bigint",
     "boolean",
     "function",
