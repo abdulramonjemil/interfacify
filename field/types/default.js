@@ -237,7 +237,8 @@ class FieldType {
   /**
    * This method is not meant to be called anywhere. It's used as a way to
    * execute code normally in a procedural manner in a class declaration.
-   * This is done so that private properties are accessible.
+   * This is done so that private properties are accessible. The method is
+   * also made static so it runs only once.
    */
   static #_ = (() => {
     FieldType.defineChainables(FieldType)
