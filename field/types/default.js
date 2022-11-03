@@ -35,10 +35,12 @@ class FieldType {
 
   #ATTRIBUTE_SETTING_METHOD = FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
   #DETERMINER = null
+  #IS_BEING_CONSTRUCTED = false
 
   #attributes = {} // Will be populated in constructor
 
   constructor(determiner, attributes) {
+    this.#IS_BEING_CONSTRUCTED = true
     this.#DETERMINER = determiner
 
     if (typeof attributes !== "object" && attributes !== undefined)
@@ -51,9 +53,7 @@ class FieldType {
 
     this.setAttributes(defaultAttributes, FieldType.#CHECK_BYPASS_SIGNATURE)
     if (attributes !== undefined) this.setAttributes(attributes)
-
-    // Reset method set by 'setAttributes'
-    this.#ATTRIBUTE_SETTING_METHOD = FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
+    this.#IS_BEING_CONSTRUCTED = false
   }
 
   static #assertAttributeValueValidity(attributeName, value) {
@@ -217,7 +217,10 @@ class FieldType {
     FieldType.#assertAttributeValueValidity(attribute, value)
     this.#attributes[attribute] = value
 
-    if (this.#ATTRIBUTE_SETTING_METHOD !== methodCalling)
+    if (
+      this.#ATTRIBUTE_SETTING_METHOD !== methodCalling &&
+      !this.#IS_BEING_CONSTRUCTED
+    )
       this.#ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
@@ -238,7 +241,10 @@ class FieldType {
         this.#attributes[attributeName] = attributeValueToSet
     })
 
-    if (this.#ATTRIBUTE_SETTING_METHOD !== methodCalling)
+    if (
+      this.#ATTRIBUTE_SETTING_METHOD !== methodCalling &&
+      !this.#IS_BEING_CONSTRUCTED
+    )
       this.#ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
