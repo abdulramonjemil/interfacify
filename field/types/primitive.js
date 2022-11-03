@@ -15,9 +15,6 @@ class PrimitiveFieldType extends FieldType {
     string: ""
   }
 
-  /**
-   * This is meant to overwrite 'FieldType.SUPPORTED_ATTRIBUTES'
-   */
   static SUPPORTED_ATTRIBUTES = [
     ...FieldType.SUPPORTED_ATTRIBUTES,
     ...PrimitiveFieldType.#ADDITIONAL_ATTRIBUTES
