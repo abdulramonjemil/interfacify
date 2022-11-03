@@ -39,6 +39,7 @@ class PrimitiveFieldType extends FieldType {
   }
 
   isTypeOf(value) {
+    if (Number.isNaN(value)) return false
     const { isNullable: fieldIsNullable, isOptional: fieldIsOptional } =
       this.getAttributes()
     if (value === undefined) return fieldIsOptional
