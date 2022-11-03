@@ -50,8 +50,10 @@ class FieldType {
     })
 
     this.setAttributes(defaultAttributes, FieldType.#CHECK_BYPASS_SIGNATURE)
-    // Attempt to overwrite defaults with supplied values
     if (attributes !== undefined) this.setAttributes(attributes)
+
+    // Reset method set by 'setAttributes'
+    this.#ATTRIBUTE_SETTING_METHOD = FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
   }
 
   static #assertAttributeValueValidity(attributeName, value) {
