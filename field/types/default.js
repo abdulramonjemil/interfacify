@@ -217,10 +217,7 @@ class FieldType {
     FieldType.#assertAttributeValueValidity(attribute, value)
     this.#attributes[attribute] = value
 
-    if (
-      this.#ATTRIBUTE_SETTING_METHOD !== methodCalling &&
-      !this.#IS_BEING_CONSTRUCTED
-    )
+    if (this.#ATTRIBUTE_SETTING_METHOD !== methodCalling)
       this.#ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
