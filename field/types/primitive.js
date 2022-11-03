@@ -16,9 +16,7 @@ class PrimitiveFieldType extends FieldType {
   }
 
   /**
-   * This is meant to overwrite 'FieldType.SUPPORTED_ATTRIBUTES'. Call
-   * '.sort()' with appropriate compare fn if it won't be alphabetically
-   * ordered based on 'name'.
+   * This is meant to overwrite 'FieldType.SUPPORTED_ATTRIBUTES'
    */
   static SUPPORTED_ATTRIBUTES = [
     ...FieldType.SUPPORTED_ATTRIBUTES,
