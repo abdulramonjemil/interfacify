@@ -15,11 +15,6 @@ class PrimitiveFieldType extends FieldType {
     string: ""
   }
 
-  /**
-   * This is meant to overwrite 'FieldType.SUPPORTED_ATTRIBUTES'. Call
-   * '.sort()' with appropriate compare fn if it won't be alphabetically
-   * ordered based on 'name'.
-   */
   static SUPPORTED_ATTRIBUTES = [
     ...FieldType.SUPPORTED_ATTRIBUTES,
     ...PrimitiveFieldType.#ADDITIONAL_ATTRIBUTES
@@ -38,9 +33,8 @@ class PrimitiveFieldType extends FieldType {
   ]
 
   constructor(determiner, attributes) {
-    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(determiner)) {
+    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(determiner))
       throw new Error(`The type '${determiner}' is not supported`)
-    }
     super(determiner, attributes)
   }
 
