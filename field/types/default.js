@@ -233,7 +233,7 @@ class FieldType {
       const attributeName = attribute.name
       const attributeValueToSet = attributes[attributeName]
 
-      // Skip setting if value is not defined (making attribute unmodified)
+      // Skip setting of value is not defined (making attribute unmodified)
       if (attributeValueToSet !== undefined)
         this.#attributes[attributeName] = attributeValueToSet
     })
