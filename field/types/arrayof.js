@@ -7,11 +7,11 @@ class ArrayOfFieldType extends FieldType {
 
     if (!Array.isArray(value)) return false
     const determiner = this.getDeterminer()
-    const determinerCanValidate = determiner instanceof FieldType
 
-    const isValidValue = determinerCanValidate
-      ? determiner.isTypeOf
-      : (item) => item === determiner
+    const isValidValue =
+      determiner instanceof FieldType
+        ? determiner.isTypeOf.bind(determiner)
+        : (item) => item === determiner
     return value.every(isValidValue)
   }
 }
