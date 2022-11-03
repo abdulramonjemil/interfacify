@@ -33,9 +33,8 @@ class PrimitiveFieldType extends FieldType {
   ]
 
   constructor(determiner, attributes) {
-    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(determiner)) {
+    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(determiner))
       throw new Error(`The type '${determiner}' is not supported`)
-    }
     super(determiner, attributes)
   }
 
