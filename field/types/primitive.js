@@ -5,6 +5,16 @@ class PrimitiveFieldType extends FieldType {
     { name: "isNullable", default: false, isChainable: true }
   ]
 
+  static #PRIMITIVES_NULL_VALUES = {
+    any: [null, 0n, 0, ""],
+    array: null,
+    bigint: 0n,
+    function: null,
+    number: 0,
+    object: null,
+    string: ""
+  }
+
   /**
    * This is meant to overwrite 'FieldType.SUPPORTED_ATTRIBUTES'. Call
    * '.sort()' with appropriate compare fn if it won't be alphabetically
@@ -35,7 +45,30 @@ class PrimitiveFieldType extends FieldType {
   }
 
   isTypeOf(value) {
-    return typeof value === this.getDeterminer()
+    const { isNullable: fieldIsNullable, isOptional: fieldIsOptional } =
+      this.getAttributes()
+    if (value === undefined) return fieldIsOptional
+
+    const expectedType = this.getDeterminer()
+    const nullValues = PrimitiveFieldType.#PRIMITIVES_NULL_VALUES
+    let valueIsNull = nullValues[expectedType] === value
+
+    if (expectedType === "any") {
+      valueIsNull = nullValues.any.some((nullValue) => nullValue === value)
+      if (valueIsNull && !fieldIsNullable) return false
+      return true
+    }
+
+    if (expectedType === "array") {
+      if (valueIsNull) return fieldIsNullable
+      if (Array.isArray(value)) return true
+      return false
+    }
+
+    const fieldHasNullEquiv =
+      expectedType !== "boolean" && expectedType !== "symbol"
+    if (fieldHasNullEquiv && valueIsNull) return fieldIsNullable
+    return typeof value === expectedType
   }
 
   static #_ = (() => {
