@@ -10,6 +10,9 @@ class OneOfFieldType extends FieldType {
         "The 'determiner' array must contain two or more elements"
       )
 
+    if (new Set(determiner).size !== determiner.length)
+      throw new Error("The 'determiner' array cannot contain duplicate types")
+
     super(determiner, attributes)
   }
 
@@ -20,6 +23,7 @@ class OneOfFieldType extends FieldType {
     const variants = this.getDeterminer()
     return variants.some((member) => {
       if (member instanceof FieldType) return member.isTypeOf(value)
+      if (Number.isNaN(member)) return Number.isNaN(value)
       return member === value
     })
   }
