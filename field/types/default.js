@@ -29,8 +29,11 @@ class FieldType {
    * name so that users can easily know which comes first when chaining.
    */
   static SUPPORTED_ATTRIBUTES = [
-    { name: "isOptional", default: false, isChainable: true },
-    { name: "isReadonly", default: false, isChainable: true }
+    { name: "isOptional", default: false },
+    { name: "isReadonly", default: false },
+    { name: "usesSameValue", default: false },
+    { name: "usesSameValueZero", default: true },
+    { name: "usesStrictEquals", default: false }
   ]
 
   #ATTRIBUTE_SETTING_METHOD = FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
