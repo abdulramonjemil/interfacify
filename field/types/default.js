@@ -34,7 +34,7 @@ class FieldType {
     { name: "usesSameValue", default: false },
     { name: "usesSameValueZero", default: true },
     { name: "usesStrictEquals", default: false }
-  ]
+  ].sort(generateCompareFn(["name"], "asc"))
 
   #ATTRIBUTE_SETTING_METHOD = FieldType.#ATTRIBUTE_SETTING_METHODS.ANY
   #DETERMINER = null
