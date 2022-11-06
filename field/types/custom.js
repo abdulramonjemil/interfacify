@@ -1,5 +1,5 @@
 const FieldType = require("./default")
-const { isObject } = require("../../lib/functions")
+const { isObject } = require("../../lib/helpers")
 
 class CustomFieldType extends FieldType {
   static #VALIDATOR_TYPES = {

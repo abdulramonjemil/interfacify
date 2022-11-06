@@ -1,5 +1,5 @@
 const FieldType = require("./default")
-const { isObject } = require("../../lib/functions")
+const { isObject } = require("../../lib/helpers")
 
 class InstanceOfFieldType extends FieldType {
   constructor(determiner, attributes) {
