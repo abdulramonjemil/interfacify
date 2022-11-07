@@ -1,7 +1,6 @@
 const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 
 class BaseFieldType {
-  static $CHECK_BYPASS_SIGNATURE = Symbol("BYPASS_CHECK_SIGNATURE")
   static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
   static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
 
