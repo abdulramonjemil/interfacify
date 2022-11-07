@@ -105,6 +105,7 @@ class BaseFieldType {
     return this.$DETERMINER
   }
 
+  // Should be overritten in extending classes if needed
   getSupportedAttributes() {
     if (this.constructor !== BaseFieldType)
       return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
