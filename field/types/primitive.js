@@ -1,6 +1,6 @@
-const FieldType = require("./base")
+const BaseFieldType = require("./base")
 
-class PrimitiveFieldType extends FieldType {
+class PrimitiveFieldType extends BaseFieldType {
   static #PRIMITIVES_NULL_VALUES = {
     any: [null, 0n, 0, ""],
     array: null,
@@ -12,7 +12,7 @@ class PrimitiveFieldType extends FieldType {
   }
 
   static SUPPORTED_ATTRIBUTES = [
-    ...FieldType.DEFAULT_FIELD_ATTRIBUTES,
+    ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
     { name: "isNullable", default: false }
   ]
 

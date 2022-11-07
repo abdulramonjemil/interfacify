@@ -1,6 +1,6 @@
-const FieldType = require("./base")
+const BaseFieldType = require("./base")
 
-class ArrayOfFieldType extends FieldType {
+class ArrayOfFieldType extends BaseFieldType {
   isTypeOf(value) {
     const { isOptional: fieldIsOptional } = this.getAttributes()
     if (value === undefined) return fieldIsOptional
@@ -9,7 +9,7 @@ class ArrayOfFieldType extends FieldType {
     const determiner = this.getDeterminer()
 
     const isValidValue =
-      determiner instanceof FieldType
+      determiner instanceof BaseFieldType
         ? determiner.isTypeOf.bind(determiner)
         : (item) => item === determiner
     return value.every(isValidValue)

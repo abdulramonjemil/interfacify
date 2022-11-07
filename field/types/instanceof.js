@@ -1,7 +1,7 @@
-const FieldType = require("./base")
+const BaseFieldType = require("./base")
 const { isObject } = require("../../lib/helpers")
 
-class InstanceOfFieldType extends FieldType {
+class InstanceOfFieldType extends BaseFieldType {
   constructor(determiner, attributes) {
     if (!isObject(determiner))
       throw new TypeError("'determiner' must be an object")

@@ -1,6 +1,6 @@
-const FieldType = require("./base")
+const BaseFieldType = require("./base")
 
-class OneOfFieldType extends FieldType {
+class OneOfFieldType extends BaseFieldType {
   constructor(determiner, attributes) {
     if (!Array.isArray(determiner))
       throw new TypeError("'determiner' must be an array")
@@ -22,7 +22,7 @@ class OneOfFieldType extends FieldType {
 
     const variants = this.getDeterminer()
     return variants.some((member) => {
-      if (member instanceof FieldType) return member.isTypeOf(value)
+      if (member instanceof BaseFieldType) return member.isTypeOf(value)
       if (Number.isNaN(member)) return Number.isNaN(value)
       return member === value
     })

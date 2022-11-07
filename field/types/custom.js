@@ -1,7 +1,7 @@
-const FieldType = require("./base")
+const BaseFieldType = require("./base")
 const { isObject } = require("../../lib/helpers")
 
-class CustomFieldType extends FieldType {
+class CustomFieldType extends BaseFieldType {
   static #VALIDATOR_TYPES = {
     SELF: Symbol("SELF"),
     SIGNATURE: Symbol("SIGNATURE")
