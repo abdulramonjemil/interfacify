@@ -11,27 +11,17 @@ class FieldType {
   static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
   static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
 
-  /**
-   * This array defines the order in which attributes should be chained,
-   * their default value, and whether they are chainable i.e they can be
-   * accessed on an instance to set their value to true
-   * (e.g 'instance.isOptional'). An attribute will be set to true when
-   * it is chained.
-   *
-   * This array may also be overwritten by subclasses, which is why
-   * 'this.constructor' is used throughout different methods of this class
-   * instead of directly using 'FieldType'.
-   *
-   * The attribute entries should be ordered alphabetically based on their
-   * name so that users can easily know which comes first when chaining.
-   */
-  static SUPPORTED_ATTRIBUTES = [
+  static DEFAULT_FIELD_ATTRIBUTES = [
     { name: "isOptional", default: false },
-    { name: "isReadonly", default: false },
+    { name: "isReadonly", default: false }
+  ]
+
+  static SUPPORTED_ATTRIBUTES = [
+    ...FieldType.DEFAULT_FIELD_ATTRIBUTES,
     { name: "isZeroSignIdentifier", default: false }
   ]
 
-  $ATTRIBUTE_SETTING_METHOD = null
+  $ATTRIBUTE_SETTING_METHOD = FieldType.$ATTRIBUTE_SETTING_METHODS.ANY
   $DETERMINER = null
 
   $attributes = {} // Will be populated in constructor
@@ -47,15 +37,15 @@ class FieldType {
       throw new TypeError("Attributes of a field type must be in an object")
 
     this.$DETERMINER = determiner
+    const definedAttributes =
+      this.constructor.SUPPORTED_ATTRIBUTES ||
+      FieldType.DEFAULT_FIELD_ATTRIBUTES
 
-    const defaultAttributes = {}
-    this.constructor.SUPPORTED_ATTRIBUTES.forEach((attribute) => {
-      defaultAttributes[attribute.name] = attribute.default
+    definedAttributes.forEach((attribute) => {
+      this.$attributes[attribute.name] = attribute.default
     })
 
-    this.setAttributes(defaultAttributes, FieldType.$CHECK_BYPASS_SIGNATURE)
     if (attributes !== undefined) this.setAttributes(attributes)
-    this.$ATTRIBUTE_SETTING_METHOD = FieldType.$ATTRIBUTE_SETTING_METHODS.ANY
   }
 
   static $assertAttributeValueValidity(value) {
@@ -75,7 +65,7 @@ class FieldType {
   /**
    * Not available for use on all instances of classes that extend 'FieldType'
    * Classes that intend to support the attribute should impelement their own
-   * instead of inheriting.
+   * instead of inheriting it
    */
   get isZeroSignIdentifier() {
     if (this.constructor !== FieldType)
@@ -98,7 +88,11 @@ class FieldType {
   }
 
   $assertAttributeSupport(attributeName) {
-    const attributeIsSupported = this.constructor.SUPPORTED_ATTRIBUTES.some(
+    const definedAttributes =
+      this.constructor.SUPPORTED_ATTRIBUTES ||
+      FieldType.DEFAULT_FIELD_ATTRIBUTES
+
+    const attributeIsSupported = definedAttributes.some(
       (entry) => entry.name === attributeName
     )
     if (!attributeIsSupported)
@@ -112,7 +106,11 @@ class FieldType {
   }
 
   $assertValidityOfAttributeValues(attributes) {
-    this.constructor.SUPPORTED_ATTRIBUTES.forEach((entry) => {
+    const definedAttributes =
+      this.constructor.SUPPORTED_ATTRIBUTES ||
+      FieldType.DEFAULT_FIELD_ATTRIBUTES
+
+    definedAttributes.forEach((entry) => {
       const { name: attributeName } = entry
       const expectedType = FieldType.$EXPECTED_TYPE_OF_ATTRIBUTES
       const attributeValue = attributes[attributeName]
@@ -189,15 +187,16 @@ class FieldType {
       this.$ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
-  setAttributes(attributes, checkBypassSignature) {
+  setAttributes(attributes) {
     const methodCalling = FieldType.$ATTRIBUTE_SETTING_METHODS.METHOD_CALLS
     this.$assertAllowanceOfAttributeSettingMethod(methodCalling)
+    this.$assertValidityOfAttributeValues(attributes)
 
-    if (checkBypassSignature !== FieldType.$CHECK_BYPASS_SIGNATURE)
-      this.$assertValidityOfAttributeValues(attributes)
-    const supportedAttributes = this.constructor.SUPPORTED_ATTRIBUTES
+    const definedAttributes =
+      this.constructor.SUPPORTED_ATTRIBUTES ||
+      FieldType.DEFAULT_FIELD_ATTRIBUTES
 
-    supportedAttributes.forEach((attribute) => {
+    definedAttributes.forEach((attribute) => {
       const attributeName = attribute.name
       const attributeValueToSet = attributes[attributeName]
 

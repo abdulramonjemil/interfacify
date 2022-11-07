@@ -1,10 +1,6 @@
 const FieldType = require("./default")
 
 class PrimitiveFieldType extends FieldType {
-  static #ADDITIONAL_ATTRIBUTES = [
-    { name: "isNullable", default: false, isChainable: true }
-  ]
-
   static #PRIMITIVES_NULL_VALUES = {
     any: [null, 0n, 0, ""],
     array: null,
@@ -16,8 +12,8 @@ class PrimitiveFieldType extends FieldType {
   }
 
   static SUPPORTED_ATTRIBUTES = [
-    ...FieldType.SUPPORTED_ATTRIBUTES,
-    ...PrimitiveFieldType.#ADDITIONAL_ATTRIBUTES
+    ...FieldType.DEFAULT_FIELD_ATTRIBUTES,
+    { name: "isNullable", default: false }
   ]
 
   static SUPPORTED_PRIMITIVES = [
@@ -65,13 +61,6 @@ class PrimitiveFieldType extends FieldType {
     if (fieldHasNullEquiv && valueIsNull) return fieldIsNullable
     return typeof value === expectedType
   }
-
-  static #_ = (() => {
-    super.defineChainables(
-      PrimitiveFieldType,
-      PrimitiveFieldType.#ADDITIONAL_ATTRIBUTES
-    )
-  })()
 }
 
 module.exports = PrimitiveFieldType
