@@ -147,7 +147,7 @@ class BaseFieldType {
         "Attributes of a field type must be in an ordinary object"
       )
 
-    Object.getOwnPropertyNames(attributes).forEach((attributeName) => {
+    Object.keys(attributes).forEach((attributeName) => {
       this.$assertAttributeSupport(attributeName)
       const attributeValueToSet = attributes[attributeName]
       BaseFieldType.$assertAttributeValueValidity(attributeValueToSet)
