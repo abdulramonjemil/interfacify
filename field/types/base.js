@@ -1,6 +1,10 @@
 const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 
 class BaseFieldType {
+  static #ADDITIONAL_ATTRIBUTES = [
+    { name: "isZeroSignIdentifier", default: false }
+  ]
+
   static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
   static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
 
@@ -111,7 +115,7 @@ class BaseFieldType {
       return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
     return [
       ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
-      { name: "isZeroSignIdentifier", default: false }
+      ...BaseFieldType.#ADDITIONAL_ATTRIBUTES
     ]
   }
 
