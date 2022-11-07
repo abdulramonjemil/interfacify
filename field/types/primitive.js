@@ -32,9 +32,13 @@ class PrimitiveFieldType extends BaseFieldType {
   )
 
   constructor(determiner, attributes) {
-    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(determiner))
-      throw new Error(`The type '${determiner}' is not supported`)
+    PrimitiveFieldType.#assertPrimitiveSupport(determiner)
     super(determiner, attributes)
+  }
+
+  static #assertPrimitiveSupport(primitive) {
+    if (!Object.hasOwn(PrimitiveFieldType.#VALIDATOR_PER_PRIMITIVE, primitive))
+      throw new Error(`The type '${primitive}' is not supported`)
   }
 
   static #isValidAnyValue(value, attributes) {
@@ -122,6 +126,19 @@ class PrimitiveFieldType extends BaseFieldType {
     return false
   }
 
+  static getSupportedAttributes(primitiveType) {
+    PrimitiveFieldType.#assertPrimitiveSupport(primitiveType)
+    const attributesForType =
+      PrimitiveFieldType.$ATTRIBUTES_PER_PRIMITIVE[primitiveType]
+    const attributesDefault = PrimitiveFieldType.#DEFAULT_VALUE_OF_ATTRIBUTES
+
+    const attributesDetails = attributesForType.map((attributeName) => ({
+      name: attributeName,
+      default: attributesDefault
+    }))
+    return [...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES, ...attributesDetails]
+  }
+
   get isFilled() {
     return this.#effectPrimitiveAttributeChaining("isFilled")
   }
@@ -167,19 +184,6 @@ class PrimitiveFieldType extends BaseFieldType {
   #effectPrimitiveAttributeChaining(attributeName) {
     this.#assertAttributeSupportForPrimitive(attributeName)
     return this.$effectAttributeChaining(attributeName)
-  }
-
-  getSupportedAttributes() {
-    const primitiveInQuestion = this.$DETERMINER
-    const supportedAttributes =
-      PrimitiveFieldType.$ATTRIBUTES_PER_PRIMITIVE[primitiveInQuestion]
-    const attributesDefault = PrimitiveFieldType.#DEFAULT_VALUE_OF_ATTRIBUTES
-
-    const attributesDetails = supportedAttributes.map((attributeName) => ({
-      name: attributeName,
-      default: attributesDefault
-    }))
-    return [...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES, ...attributesDetails]
   }
 
   isTypeOf(value) {

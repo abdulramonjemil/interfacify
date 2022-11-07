@@ -1,10 +1,4 @@
-const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
-
 class BaseFieldType {
-  static #ADDITIONAL_ATTRIBUTES = [
-    { name: "isZeroSignIdentifier", default: false }
-  ]
-
   static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
   static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
 
@@ -17,12 +11,6 @@ class BaseFieldType {
   $attributes = {} // Will be populated in constructor
 
   constructor(determiner, attributes) {
-    if (determiner === undefined && this.constructor === BaseFieldType)
-      throw new TypeError(
-        "The 'determiner' of direct instances of 'BaseFieldType' cannot be 'undefined', " +
-          "make the field optional instead"
-      )
-
     if (typeof attributes !== "object" && attributes !== undefined)
       throw new TypeError(
         "Attributes of a field type must be in an ordinary object"
@@ -39,26 +27,17 @@ class BaseFieldType {
       throw new Error(`Attributes must be of '${expectedType}' type`)
   }
 
+  // Should be overritten in extending classes if needed
+  static getSupportedAttributes() {
+    return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
+  }
+
   get isOptional() {
     return this.$effectAttributeChaining("isOptional")
   }
 
   get isReadonly() {
     return this.$effectAttributeChaining("isReadonly")
-  }
-
-  /**
-   * Not available for use on all instances of classes that extend 'BaseFieldType'
-   * Classes that intend to support the attribute should impelement their own
-   * instead of inheriting it
-   */
-  get isZeroSignIdentifier() {
-    if (this.constructor !== BaseFieldType)
-      throw new Error(
-        "The attribute 'isZeroSignIdentifier' is not supported by instances of " +
-          `'${this.constructor.name}`
-      )
-    return this.$effectAttributeChaining("isZeroSignIdentifier")
   }
 
   $assertAttributeSupport(attributeName) {
@@ -81,16 +60,16 @@ class BaseFieldType {
   }
 
   $setDefaultAttributes() {
-    const defaultAttributes = this.getSupportedAttributes()
+    const determiner = this.$DETERMINER
+    const defaultAttributes =
+      this.constructor.getSupportedAttributes(determiner)
     defaultAttributes.forEach((attribute) => {
       this.$attributes[attribute.name] = attribute.default
     })
   }
 
   duplicate() {
-    const duplicate = new this.constructor(this.$DETERMINER, this.$attributes)
-    duplicate.$ATTRIBUTE_SETTING_METHOD = this.$ATTRIBUTE_SETTING_METHOD
-    return duplicate
+    return new this.constructor(this.$DETERMINER, this.$attributes)
   }
 
   getAttribute(attributeName) {
@@ -109,26 +88,9 @@ class BaseFieldType {
     return this.$DETERMINER
   }
 
-  // Should be overritten in extending classes if needed
-  getSupportedAttributes() {
-    if (this.constructor !== BaseFieldType)
-      return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
-    return [
-      ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
-      ...BaseFieldType.#ADDITIONAL_ATTRIBUTES
-    ]
-  }
-
-  isTypeOf(value) {
-    const {
-      isOptional: fieldIsOptional,
-      isZeroSignIdentifier: fieldIdentifiesZeroSigns
-    } = this.$attributes
-
-    if (value === undefined) return fieldIsOptional
-    return fieldIdentifiesZeroSigns
-      ? isSameValue(this.$DETERMINER, value)
-      : isSameValueZero(this.$DETERMINER, value)
+  /* eslint-disable-next-line class-methods-use-this */
+  isTypeOf() {
+    return false
   }
 
   resetAttributes() {
