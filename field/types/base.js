@@ -9,11 +9,6 @@ class BaseFieldType {
     { name: "isReadonly", default: false }
   ]
 
-  static SUPPORTED_ATTRIBUTES = [
-    ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
-    { name: "isZeroSignIdentifier", default: false }
-  ]
-
   $DETERMINER = null
   $attributes = {} // Will be populated in constructor
 
@@ -81,18 +76,8 @@ class BaseFieldType {
     return this
   }
 
-  $getDefaultAttributes() {
-    const attributesDescriptor = Object.getOwnPropertyDescriptor(
-      this.constructor,
-      "SUPPORTED_ATTRIBUTES"
-    )
-    if (attributesDescriptor !== undefined)
-      return attributesDescriptor.value || attributesDescriptor.get()
-    return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
-  }
-
   $setDefaultAttributes() {
-    const defaultAttributes = this.$getDefaultAttributes()
+    const defaultAttributes = this.getSupportedAttributes()
     defaultAttributes.forEach((attribute) => {
       this.$attributes[attribute.name] = attribute.default
     })
@@ -118,6 +103,15 @@ class BaseFieldType {
 
   getDeterminer() {
     return this.$DETERMINER
+  }
+
+  getSupportedAttributes() {
+    if (this.constructor !== BaseFieldType)
+      return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
+    return [
+      ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
+      { name: "isZeroSignIdentifier", default: false }
+    ]
   }
 
   isTypeOf(value) {
