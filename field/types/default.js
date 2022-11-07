@@ -34,7 +34,9 @@ class FieldType {
       )
 
     if (typeof attributes !== "object" && attributes !== undefined)
-      throw new TypeError("Attributes of a field type must be in an object")
+      throw new TypeError(
+        "Attributes of a field type must be in an ordinary object"
+      )
 
     this.$DETERMINER = determiner
     const definedAttributes =
@@ -182,21 +184,19 @@ class FieldType {
   }
 
   setAttributes(attributes) {
+    if (typeof attributes !== "object")
+      throw new TypeError(
+        "Attributes of a field type must be in an ordinary object"
+      )
+
     const methodCalling = FieldType.$ATTRIBUTE_SETTING_METHODS.METHOD_CALLS
     this.$assertAllowanceOfAttributeSettingMethod(methodCalling)
-    this.$assertValidityOfAttributeValues(attributes)
 
-    const definedAttributes =
-      this.constructor.SUPPORTED_ATTRIBUTES ||
-      FieldType.DEFAULT_FIELD_ATTRIBUTES
-
-    definedAttributes.forEach((attribute) => {
-      const attributeName = attribute.name
+    Object.getOwnPropertyNames(attributes).forEach((attributeName) => {
+      this.$assertAttributeSupport(attributeName)
       const attributeValueToSet = attributes[attributeName]
-
-      // Skip setting of value is not defined (making attribute unmodified)
-      if (attributeValueToSet !== undefined)
-        this.$attributes[attributeName] = attributeValueToSet
+      FieldType.$assertAttributeValueValidity(attributeValueToSet)
+      this.$attributes[attributeName] = attributeValueToSet
     })
 
     if (this.$ATTRIBUTE_SETTING_METHOD !== methodCalling)
