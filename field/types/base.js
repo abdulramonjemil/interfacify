@@ -82,26 +82,6 @@ class BaseFieldType {
       throw new Error(`Chaining the attribute '${attributeName}' has no effect`)
   }
 
-  $assertValidityOfAttributeValues(attributes) {
-    const definedAttributes =
-      this.constructor.SUPPORTED_ATTRIBUTES ||
-      BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
-
-    definedAttributes.forEach((entry) => {
-      const { name: attributeName } = entry
-      const expectedType = BaseFieldType.$EXPECTED_TYPE_OF_ATTRIBUTES
-      const attributeValue = attributes[attributeName]
-
-      if (
-        typeof attributeValue !== expectedType &&
-        attributeValue !== undefined
-      )
-        throw new TypeError(
-          `The attribute '${attributeName}' must be of '${expectedType}' type`
-        )
-    })
-  }
-
   $effectAttributeChaining(attributeName) {
     const chainingMethod = BaseFieldType.$ATTRIBUTE_SETTING_METHODS.CHAINING
     this.$assertEffectivenessOfChaining(attributeName)
