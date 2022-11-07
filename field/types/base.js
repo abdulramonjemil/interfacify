@@ -31,7 +31,6 @@ class BaseFieldType {
 
     this.$DETERMINER = determiner
     this.$setDefaultAttributes()
-
     if (attributes !== undefined) this.setAttributes(attributes)
   }
 
@@ -87,12 +86,19 @@ class BaseFieldType {
     return this
   }
 
-  $setDefaultAttributes() {
-    const definedAttributes =
-      this.constructor.SUPPORTED_ATTRIBUTES ||
-      BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
+  $getDefaultAttributes() {
+    const attributesDescriptor = Object.getOwnPropertyDescriptor(
+      this.constructor,
+      "SUPPORTED_ATTRIBUTES"
+    )
+    if (attributesDescriptor !== undefined)
+      return attributesDescriptor.value || attributesDescriptor.get()
+    return BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
+  }
 
-    definedAttributes.forEach((attribute) => {
+  $setDefaultAttributes() {
+    const defaultAttributes = this.$getDefaultAttributes()
+    defaultAttributes.forEach((attribute) => {
       this.$attributes[attribute.name] = attribute.default
     })
   }
