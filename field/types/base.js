@@ -1,12 +1,6 @@
 const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 
 class BaseFieldType {
-  static $ATTRIBUTE_SETTING_METHODS = {
-    ANY: Symbol("ANY"),
-    CHAINING: Symbol("CHAINING"),
-    METHOD_CALLS: Symbol("METHOD_CALLS")
-  }
-
   static $CHECK_BYPASS_SIGNATURE = Symbol("BYPASS_CHECK_SIGNATURE")
   static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
   static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
@@ -21,9 +15,7 @@ class BaseFieldType {
     { name: "isZeroSignIdentifier", default: false }
   ]
 
-  $ATTRIBUTE_SETTING_METHOD = BaseFieldType.$ATTRIBUTE_SETTING_METHODS.ANY
   $DETERMINER = null
-
   $attributes = {} // Will be populated in constructor
 
   constructor(determiner, attributes) {
@@ -78,17 +70,6 @@ class BaseFieldType {
     return this.$effectAttributeChaining("isZeroSignIdentifier")
   }
 
-  $assertAllowanceOfAttributeSettingMethod(method) {
-    const allowedMethod = this.$ATTRIBUTE_SETTING_METHOD
-    const methodIsAllowed =
-      method === BaseFieldType.$ATTRIBUTE_SETTING_METHODS.ANY ||
-      method === allowedMethod
-    if (!methodIsAllowed)
-      throw new Error(
-        `attribute cannot be set by '${method.description.toLowerCase()}'. Use other methods instead`
-      )
-  }
-
   $assertAttributeSupport(attributeName) {
     const attributeIsSupported = Object.hasOwn(this.$attributes, attributeName)
     if (!attributeIsSupported)
@@ -123,7 +104,6 @@ class BaseFieldType {
 
   $effectAttributeChaining(attributeName) {
     const chainingMethod = BaseFieldType.$ATTRIBUTE_SETTING_METHODS.CHAINING
-    this.$assertAllowanceOfAttributeSettingMethod(chainingMethod)
     this.$assertEffectivenessOfChaining(attributeName)
 
     this.$attributes[attributeName] =
@@ -143,10 +123,6 @@ class BaseFieldType {
   getAttribute(attributeName) {
     this.$assertAttributeSupport(attributeName)
     return this.$attributes[attributeName]
-  }
-
-  getAttributeSettingMethod() {
-    return this.$ATTRIBUTE_SETTING_METHOD.description.toLowerCase()
   }
 
   getAttributes() {
@@ -173,14 +149,9 @@ class BaseFieldType {
   }
 
   setAttribute(attribute, value) {
-    const methodCalling = BaseFieldType.$ATTRIBUTE_SETTING_METHODS.METHOD_CALLS
-    this.$assertAllowanceOfAttributeSettingMethod(methodCalling)
     this.$assertAttributeSupport(attribute)
-
     BaseFieldType.$assertAttributeValueValidity(value)
     this.$attributes[attribute] = value
-    if (this.$ATTRIBUTE_SETTING_METHOD !== methodCalling)
-      this.$ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 
   setAttributes(attributes) {
@@ -189,18 +160,12 @@ class BaseFieldType {
         "Attributes of a field type must be in an ordinary object"
       )
 
-    const methodCalling = BaseFieldType.$ATTRIBUTE_SETTING_METHODS.METHOD_CALLS
-    this.$assertAllowanceOfAttributeSettingMethod(methodCalling)
-
     Object.getOwnPropertyNames(attributes).forEach((attributeName) => {
       this.$assertAttributeSupport(attributeName)
       const attributeValueToSet = attributes[attributeName]
       BaseFieldType.$assertAttributeValueValidity(attributeValueToSet)
       this.$attributes[attributeName] = attributeValueToSet
     })
-
-    if (this.$ATTRIBUTE_SETTING_METHOD !== methodCalling)
-      this.$ATTRIBUTE_SETTING_METHOD = methodCalling
   }
 }
 
