@@ -88,13 +88,7 @@ class FieldType {
   }
 
   $assertAttributeSupport(attributeName) {
-    const definedAttributes =
-      this.constructor.SUPPORTED_ATTRIBUTES ||
-      FieldType.DEFAULT_FIELD_ATTRIBUTES
-
-    const attributeIsSupported = definedAttributes.some(
-      (entry) => entry.name === attributeName
-    )
+    const attributeIsSupported = Object.hasOwn(this.$attributes, attributeName)
     if (!attributeIsSupported)
       throw new Error(`The attribute '${attributeName}' is not supported`)
   }
