@@ -75,14 +75,9 @@ class BaseFieldType {
   }
 
   $effectAttributeChaining(attributeName) {
-    const chainingMethod = BaseFieldType.$ATTRIBUTE_SETTING_METHODS.CHAINING
     this.$assertEffectivenessOfChaining(attributeName)
-
     this.$attributes[attributeName] =
       BaseFieldType.$VALUE_OF_ATTRIBUTES_AFTER_CHAINING
-
-    if (this.$ATTRIBUTE_SETTING_METHOD !== chainingMethod)
-      this.$ATTRIBUTE_SETTING_METHOD = chainingMethod
     return this
   }
 
