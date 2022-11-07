@@ -31,13 +31,7 @@ class BaseFieldType {
       )
 
     this.$DETERMINER = determiner
-    const definedAttributes =
-      this.constructor.SUPPORTED_ATTRIBUTES ||
-      BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
-
-    definedAttributes.forEach((attribute) => {
-      this.$attributes[attribute.name] = attribute.default
-    })
+    this.$setDefaultAttributes()
 
     if (attributes !== undefined) this.setAttributes(attributes)
   }
@@ -94,6 +88,16 @@ class BaseFieldType {
     return this
   }
 
+  $setDefaultAttributes() {
+    const definedAttributes =
+      this.constructor.SUPPORTED_ATTRIBUTES ||
+      BaseFieldType.DEFAULT_FIELD_ATTRIBUTES
+
+    definedAttributes.forEach((attribute) => {
+      this.$attributes[attribute.name] = attribute.default
+    })
+  }
+
   duplicate() {
     const duplicate = new this.constructor(this.$DETERMINER, this.$attributes)
     duplicate.$ATTRIBUTE_SETTING_METHOD = this.$ATTRIBUTE_SETTING_METHOD
@@ -126,6 +130,10 @@ class BaseFieldType {
     return fieldIdentifiesZeroSigns
       ? isSameValue(this.$DETERMINER, value)
       : isSameValueZero(this.$DETERMINER, value)
+  }
+
+  resetAttributes() {
+    this.$setDefaultAttributes()
   }
 
   setAttribute(attribute, value) {
