@@ -1,4 +1,4 @@
-const FieldType = require("./default")
+const FieldType = require("./base")
 
 class OneOfFieldType extends FieldType {
   constructor(determiner, attributes) {

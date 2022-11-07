@@ -1,4 +1,4 @@
-const FieldType = require("./default")
+const FieldType = require("./base")
 
 class PrimitiveFieldType extends FieldType {
   static #PRIMITIVES_NULL_VALUES = {

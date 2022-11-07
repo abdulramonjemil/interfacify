@@ -1,4 +1,4 @@
-const FieldType = require("./default")
+const FieldType = require("./base")
 const { isObject } = require("../../lib/helpers")
 
 class InstanceOfFieldType extends FieldType {
