@@ -7,7 +7,7 @@ class PrimitiveFieldType extends BaseFieldType {
     bigint: ["isPositive"],
     boolean: [],
     function: ["isNullable"],
-    number: ["isInteger", "isNonNegative", "isPositive"],
+    number: ["canBeNaN", "isInteger", "isNonNegative", "isPositive"],
     object: ["canBeAFunction", "isNullable"],
     string: ["canBeEmpty"],
     symbol: []
@@ -88,6 +88,7 @@ class PrimitiveFieldType extends BaseFieldType {
 
   static #isValidNumberValue(value, attributes) {
     const {
+      canBeNaN: fieldCanBeNaN,
       isInteger: fieldIsInteger,
       isNonNegative: fieldIsNonNegative,
       isOptional: fieldIsOptional,
@@ -96,6 +97,7 @@ class PrimitiveFieldType extends BaseFieldType {
 
     if (value === undefined) return fieldIsOptional
     if (typeof value !== "number") return false
+    if (Number.isNaN(value)) return fieldCanBeNaN
     if (value <= 0 && fieldIsPositive) return false
     if (value < 0 && fieldIsNonNegative) return false
     if (!Number.isInteger(value) && fieldIsInteger) return false
