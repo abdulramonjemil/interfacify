@@ -3,13 +3,13 @@ const BaseFieldType = require("./base")
 class PrimitiveFieldType extends BaseFieldType {
   static #ATTRIBUTES_PER_PRIMITIVE = {
     any: [],
-    array: ["canBeEmpty", "isNullable"],
+    array: ["isFilled"],
     bigint: ["isPositive"],
     boolean: [],
-    function: ["isNullable"],
-    number: ["canBeNaN", "isInteger", "isNonNegative", "isPositive"],
-    object: ["canBeAFunction", "isNullable"],
-    string: ["canBeEmpty"],
+    function: [],
+    number: ["isInteger", "isNonNegative", "isPositive"],
+    object: ["isGeneric"],
+    string: ["isFilled"],
     symbol: []
   }
 
@@ -44,17 +44,11 @@ class PrimitiveFieldType extends BaseFieldType {
   }
 
   static #isValidArrayValue(value, attributes) {
-    const {
-      canBeEmpty: fieldCanBeEmpty,
-      isNullable: fieldIsNullable,
-      isOptional: fieldIsOptional
-    } = attributes
+    const { isFilled: fieldIsFilled, isOptional: fieldIsOptional } = attributes
 
     if (value === undefined) return fieldIsOptional
-    if (value === null) return fieldIsNullable
-
     if (!Array.isArray(value)) return false
-    if (value.length === 0) return fieldCanBeEmpty
+    if (value.length === 0) return !fieldIsFilled
     return true
   }
 
@@ -77,18 +71,15 @@ class PrimitiveFieldType extends BaseFieldType {
   }
 
   static #isValidFunctionValue(value, attributes) {
-    const { isNullable: fieldIsNullable, isOptional: fieldIsOptional } =
-      attributes
+    const { isOptional: fieldIsOptional } = attributes
 
     if (value === undefined) return fieldIsOptional
-    if (value === null) return fieldIsNullable
     if (typeof value === "function") return true
     return false
   }
 
   static #isValidNumberValue(value, attributes) {
     const {
-      canBeNaN: fieldCanBeNaN,
       isInteger: fieldIsInteger,
       isNonNegative: fieldIsNonNegative,
       isOptional: fieldIsOptional,
@@ -97,7 +88,7 @@ class PrimitiveFieldType extends BaseFieldType {
 
     if (value === undefined) return fieldIsOptional
     if (typeof value !== "number") return false
-    if (Number.isNaN(value)) return fieldCanBeNaN
+    if (Number.isNaN(value)) return false
     if (value <= 0 && fieldIsPositive) return false
     if (value < 0 && fieldIsNonNegative) return false
     if (!Number.isInteger(value) && fieldIsInteger) return false
@@ -105,39 +96,38 @@ class PrimitiveFieldType extends BaseFieldType {
   }
 
   static #isValidObjectValue(value, attributes) {
-    const {
-      canBeAFunction: fieldCanBeAFunction,
-      isOptional: fieldIsOptional,
-      isNullable: fieldIsNullable
-    } = attributes
+    const { isGeneric: fieldIsGeneric, isOptional: fieldIsOptional } =
+      attributes
 
     if (value === undefined) return fieldIsOptional
-    if (value === null) return fieldIsNullable
-    if (typeof value === "function") return fieldCanBeAFunction
+    if (value === null) return false
+    if (typeof value === "function") return fieldIsGeneric
     if (typeof value === "object") return true
     return false
   }
 
   static #isValidStringValue(value, attributes) {
-    const { canBeEmpty: fieldCanBeEmpty, isOptional: fieldIsOptional } =
-      attributes
+    const { isFilled: fieldIsFilled, isOptional: fieldIsOptional } = attributes
 
     if (value === undefined) return fieldIsOptional
     if (typeof value !== "string") return false
-    if (value === "") return fieldCanBeEmpty
+    if (value === "") return !fieldIsFilled
     return true
   }
 
   static #isValidSymbolValue(value, attributes) {
     const { isOptional: fieldIsOptional } = attributes
-
     if (value === undefined) return fieldIsOptional
     if (typeof value === "symbol") return true
     return false
   }
 
-  get canBeEmpty() {
-    return this.#effectPrimitiveAttributeChaining("canBeEmpty")
+  get isFilled() {
+    return this.#effectPrimitiveAttributeChaining("isFilled")
+  }
+
+  get isGeneric() {
+    return this.#effectPrimitiveAttributeChaining("isGeneric")
   }
 
   get isInteger() {
@@ -151,10 +141,6 @@ class PrimitiveFieldType extends BaseFieldType {
         "A field cannot be 'non-negative' and 'positive' at the same time"
       )
     return this.#effectPrimitiveAttributeChaining("isNonNegative")
-  }
-
-  get isNullable() {
-    return this.#effectPrimitiveAttributeChaining("isNullable")
   }
 
   get isPositive() {
