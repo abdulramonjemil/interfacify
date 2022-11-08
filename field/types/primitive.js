@@ -27,9 +27,17 @@ class PrimitiveFieldType extends BaseFieldType {
     symbol: PrimitiveFieldType.#isValidSymbolValue
   }
 
-  static SUPPORTED_PRIMITIVES = Object.keys(
-    PrimitiveFieldType.#ATTRIBUTES_PER_PRIMITIVE
-  )
+  static SUPPORTED_PRIMITIVES = [
+    "any",
+    "array",
+    "bigint",
+    "boolean",
+    "function",
+    "number",
+    "object",
+    "string",
+    "symbol"
+  ]
 
   constructor(determiner, attributes) {
     PrimitiveFieldType.#assertPrimitiveSupport(determiner)
