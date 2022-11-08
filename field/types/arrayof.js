@@ -3,7 +3,7 @@ const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 
 class ArrayOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = [
-    { name: "isTemplate", default: false },
+    { name: "isEmptiable", default: false },
     { name: "isZeroSignIdentifier", default: false }
   ]
 
@@ -14,8 +14,8 @@ class ArrayOfFieldType extends BaseFieldType {
     ]
   }
 
-  get isTemplate() {
-    return this.$effectAttributeChaining("isTemplate")
+  get isEmptiable() {
+    return this.$effectAttributeChaining("isEmptiable")
   }
 
   get isZeroSignIdentifier() {
@@ -24,14 +24,14 @@ class ArrayOfFieldType extends BaseFieldType {
 
   isTypeOf(value) {
     const {
-      isTemplate: fieldIsTemplate,
+      isEmptiable: fieldIsEmptiable,
       isOptional: fieldIsOptional,
       isZeroSignIdentifier: fieldIdentifiesZeroSigns
     } = this.$attributes
 
     if (value === undefined) return fieldIsOptional
     if (!Array.isArray(value)) return false
-    if (value.length === 0) return fieldIsTemplate
+    if (value.length === 0) return fieldIsEmptiable
 
     const determiner = this.$DETERMINER
     if (determiner instanceof BaseFieldType)
