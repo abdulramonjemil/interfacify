@@ -11,6 +11,9 @@ class BaseFieldType {
   $attributes = {} // Will be populated in constructor
 
   constructor(determiner, attributes) {
+    if (new.target === BaseFieldType)
+      throw new Error("'BaseFieldType' cannot be constructed directly")
+
     if (typeof attributes !== "object" && attributes !== undefined)
       throw new TypeError(
         "Attributes of a field type must be in an ordinary object"
