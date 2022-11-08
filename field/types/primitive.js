@@ -15,18 +15,6 @@ class PrimitiveFieldType extends BaseFieldType {
 
   static #DEFAULT_VALUE_OF_ATTRIBUTES = false
 
-  static #VALIDATOR_PER_PRIMITIVE = {
-    any: PrimitiveFieldType.#isValidAnyValue,
-    array: PrimitiveFieldType.#isValidArrayValue,
-    bigint: PrimitiveFieldType.#isValidBigintValue,
-    boolean: PrimitiveFieldType.#isValidBooleanValue,
-    function: PrimitiveFieldType.#isValidFunctionValue,
-    number: PrimitiveFieldType.#isValidNumberValue,
-    object: PrimitiveFieldType.#isValidObjectValue,
-    string: PrimitiveFieldType.#isValidStringValue,
-    symbol: PrimitiveFieldType.#isValidSymbolValue
-  }
-
   static SUPPORTED_PRIMITIVES = [
     "any",
     "array",
@@ -45,93 +33,8 @@ class PrimitiveFieldType extends BaseFieldType {
   }
 
   static #assertPrimitiveSupport(primitive) {
-    if (!Object.hasOwn(PrimitiveFieldType.#VALIDATOR_PER_PRIMITIVE, primitive))
+    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(primitive))
       throw new Error(`The type '${primitive}' is not supported`)
-  }
-
-  static #isValidAnyValue(value, attributes) {
-    const { isOptional: fieldIsOptional } = attributes
-    if (value === undefined) return fieldIsOptional
-    return true
-  }
-
-  static #isValidArrayValue(value, attributes) {
-    const { isFilled: fieldIsFilled, isOptional: fieldIsOptional } = attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (!Array.isArray(value)) return false
-    if (value.length === 0) return !fieldIsFilled
-    return true
-  }
-
-  static #isValidBigintValue(value, attributes) {
-    const { isOptional: fieldIsOptional, isPositive: fieldIsPositive } =
-      attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (typeof value !== "bigint") return false
-    if (value === 0n && fieldIsPositive) return false
-    return true
-  }
-
-  static #isValidBooleanValue(value, attributes) {
-    const { isOptional: fieldIsOptional } = attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (typeof value === "boolean") return true
-    return false
-  }
-
-  static #isValidFunctionValue(value, attributes) {
-    const { isOptional: fieldIsOptional } = attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (typeof value === "function") return true
-    return false
-  }
-
-  static #isValidNumberValue(value, attributes) {
-    const {
-      isInteger: fieldIsInteger,
-      isNonNegative: fieldIsNonNegative,
-      isOptional: fieldIsOptional,
-      isPositive: fieldIsPositive
-    } = attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (typeof value !== "number") return false
-    if (Number.isNaN(value)) return false
-    if (value <= 0 && fieldIsPositive) return false
-    if (value < 0 && fieldIsNonNegative) return false
-    if (!Number.isInteger(value) && fieldIsInteger) return false
-    return true
-  }
-
-  static #isValidObjectValue(value, attributes) {
-    const { isGeneric: fieldIsGeneric, isOptional: fieldIsOptional } =
-      attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (value === null) return false
-    if (typeof value === "function") return fieldIsGeneric
-    if (typeof value === "object") return true
-    return false
-  }
-
-  static #isValidStringValue(value, attributes) {
-    const { isFilled: fieldIsFilled, isOptional: fieldIsOptional } = attributes
-
-    if (value === undefined) return fieldIsOptional
-    if (typeof value !== "string") return false
-    if (value === "") return !fieldIsFilled
-    return true
-  }
-
-  static #isValidSymbolValue(value, attributes) {
-    const { isOptional: fieldIsOptional } = attributes
-    if (value === undefined) return fieldIsOptional
-    if (typeof value === "symbol") return true
-    return false
   }
 
   static getSupportedAttributes(primitiveType) {
@@ -170,7 +73,7 @@ class PrimitiveFieldType extends BaseFieldType {
 
   get isPositive() {
     const { isNonNegative: fieldIsNonNegative } = this.$attributes
-    if (fieldIsNonNegative)
+    if (fieldIsNonNegative && this.$DETERMINER === "number")
       throw new Error(
         "A field cannot be 'non-negative' and 'positive' at the same time"
       )
@@ -194,10 +97,104 @@ class PrimitiveFieldType extends BaseFieldType {
     return this.$effectAttributeChaining(attributeName)
   }
 
+  #valueIsValidAny(value) {
+    const { isOptional: fieldIsOptional } = this.$attributes
+    if (value === undefined) return fieldIsOptional
+    return true
+  }
+
+  #valueIsValidArray(value) {
+    const { isFilled: fieldIsFilled, isOptional: fieldIsOptional } =
+      this.$attributes
+
+    if (value === undefined) return fieldIsOptional
+    if (!Array.isArray(value)) return false
+    if (value.length === 0) return !fieldIsFilled
+    return true
+  }
+
+  #valueIsValidBigint(value) {
+    const { isOptional: fieldIsOptional, isPositive: fieldIsPositive } =
+      this.$attributes
+
+    if (value === undefined) return fieldIsOptional
+    if (typeof value !== "bigint") return false
+    if (value === 0n && fieldIsPositive) return false
+    return true
+  }
+
+  #valueIsValidBoolean(value) {
+    const { isOptional: fieldIsOptional } = this.$attributes
+
+    if (value === undefined) return fieldIsOptional
+    if (typeof value === "boolean") return true
+    return false
+  }
+
+  #valueIsValidFunction(value) {
+    const { isOptional: fieldIsOptional } = this.$attributes
+
+    if (value === undefined) return fieldIsOptional
+    if (typeof value === "function") return true
+    return false
+  }
+
+  #valueIsValidNumber(value) {
+    const {
+      isInteger: fieldIsInteger,
+      isNonNegative: fieldIsNonNegative,
+      isOptional: fieldIsOptional,
+      isPositive: fieldIsPositive
+    } = this.$attributes
+
+    if (value === undefined) return fieldIsOptional
+    if (typeof value !== "number") return false
+    if (Number.isNaN(value)) return false
+    if (value <= 0 && fieldIsPositive) return false
+    if (value < 0 && fieldIsNonNegative) return false
+    if (!Number.isInteger(value) && fieldIsInteger) return false
+    return true
+  }
+
+  #valueIsValidObject(value) {
+    const { isGeneric: fieldIsGeneric, isOptional: fieldIsOptional } =
+      this.$attributes
+
+    if (value === undefined) return fieldIsOptional
+    if (value === null) return false
+    if (typeof value === "function") return fieldIsGeneric
+    if (typeof value === "object") return true
+    return false
+  }
+
+  #valueIsValidString(value) {
+    const { isFilled: fieldIsFilled, isOptional: fieldIsOptional } =
+      this.$attributes
+    if (value === undefined) return fieldIsOptional
+    if (typeof value !== "string") return false
+    if (value === "") return !fieldIsFilled
+    return true
+  }
+
+  #valueIsValidSymbol(value) {
+    const { isOptional: fieldIsOptional } = this.$attributes
+    if (value === undefined) return fieldIsOptional
+    if (typeof value === "symbol") return true
+    return false
+  }
+
   isTypeOf(value) {
-    const validators = PrimitiveFieldType.#VALIDATOR_PER_PRIMITIVE
-    const validatorForExpectedType = validators[this.$DETERMINER]
-    return validatorForExpectedType(value, this.$attributes)
+    const expectedType = this.$DETERMINER
+    if (expectedType === "any") return this.#valueIsValidAny(value)
+    if (expectedType === "array") return this.#valueIsValidArray(value)
+    if (expectedType === "bigint") return this.#valueIsValidBigint(value)
+    if (expectedType === "boolean") return this.#valueIsValidBoolean(value)
+    if (expectedType === "function") return this.#valueIsValidFunction(value)
+    if (expectedType === "number") return this.#valueIsValidNumber(value)
+    if (expectedType === "object") return this.#valueIsValidObject(value)
+    if (expectedType === "string") return this.#valueIsValidString(value)
+    if (expectedType === "symbol") return this.#valueIsValidSymbol(value)
+    return false // Should never run
   }
 }
 
