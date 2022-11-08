@@ -19,9 +19,9 @@ class InstanceOfFieldType extends BaseFieldType {
   }
 
   isTypeOf(value) {
-    const { isOptional: fieldIsOptional } = this.getAttributes()
+    const { isOptional: fieldIsOptional } = this.$attributes
     if (value === undefined) return fieldIsOptional
-    const determiner = this.getDeterminer()
+    const determiner = this.$DETERMINER
     return value instanceof determiner
   }
 }
