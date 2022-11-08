@@ -1,5 +1,5 @@
-const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 const BaseFieldType = require("./base")
+const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 
 class ArrayOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = [
