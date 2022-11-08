@@ -1,18 +1,45 @@
+const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 const BaseFieldType = require("./base")
 
 class ArrayOfFieldType extends BaseFieldType {
+  static #ADDITIONAL_ATTRIBUTES = [
+    { name: "isTemplate", default: false },
+    { name: "isZeroSignIdentifier", default: false }
+  ]
+
+  static getSupportedAttributes() {
+    return [
+      ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
+      ...ArrayOfFieldType.#ADDITIONAL_ATTRIBUTES
+    ]
+  }
+
+  get isTemplate() {
+    return this.$effectAttributeChaining("isTemplate")
+  }
+
+  get isZeroSignIdentifier() {
+    return this.$effectAttributeChaining("isZeroSignIdentifier")
+  }
+
   isTypeOf(value) {
-    const { isOptional: fieldIsOptional } = this.getAttributes()
+    const {
+      isTemplate: fieldIsTemplate,
+      isOptional: fieldIsOptional,
+      isZeroSignIdentifier: fieldIdentifiesZeroSigns
+    } = this.$attributes
+
     if (value === undefined) return fieldIsOptional
-
     if (!Array.isArray(value)) return false
-    const determiner = this.getDeterminer()
+    if (value.length === 0) return fieldIsTemplate
 
-    const isValidValue =
-      determiner instanceof BaseFieldType
-        ? determiner.isTypeOf.bind(determiner)
-        : (item) => item === determiner
-    return value.every(isValidValue)
+    const determiner = this.$DETERMINER
+    if (determiner instanceof BaseFieldType)
+      return value.every(determiner.isTypeOf.bind(determiner))
+
+    return fieldIdentifiesZeroSigns
+      ? value.every(isSameValue.bind(null, determiner))
+      : value.every(isSameValueZero.bind(null, determiner))
   }
 }
 
