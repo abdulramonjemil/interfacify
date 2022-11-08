@@ -29,6 +29,10 @@ class OneOfFieldType extends BaseFieldType {
     super(determiner, attributes)
   }
 
+  get isZeroSignIdentifier() {
+    return this.$effectAttributeChaining("isZeroSignIdentifier")
+  }
+
   isTypeOf(value) {
     const {
       isOptional: fieldIsOptional,
