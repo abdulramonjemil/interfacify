@@ -33,7 +33,7 @@ class PrimitiveFieldType extends BaseFieldType {
   }
 
   static #assertPrimitiveSupport(primitive) {
-    if (!PrimitiveFieldType.SUPPORTED_PRIMITIVES.includes(primitive))
+    if (!Object.hasOwn(PrimitiveFieldType.#ATTRIBUTES_PER_PRIMITIVE, primitive))
       throw new Error(`The type '${primitive}' is not supported`)
   }
 
