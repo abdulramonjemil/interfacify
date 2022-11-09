@@ -1,17 +1,32 @@
 const BaseFieldType = require("./base")
-const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
+const {
+  containsDuplicates,
+  containsDuplicatesZero
+} = require("../../lib/helpers")
 
 class ArrayOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = [
+    { name: "hasUniqueItems", default: false },
     { name: "isEmptiable", default: false },
     { name: "isZeroSignIdentifier", default: false }
   ]
+
+  constructor(determiner, attributes) {
+    if (!(determiner instanceof BaseFieldType))
+      throw new TypeError("'determiner' must be an instance of 'BaseFieldType'")
+
+    super(determiner, attributes)
+  }
 
   static getSupportedAttributes() {
     return [
       ...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES,
       ...ArrayOfFieldType.#ADDITIONAL_ATTRIBUTES
     ]
+  }
+
+  get hasUniqueItems() {
+    return this.$effectAttributeChaining("hasUniqueItems")
   }
 
   get isEmptiable() {
@@ -24,6 +39,7 @@ class ArrayOfFieldType extends BaseFieldType {
 
   isTypeOf(value) {
     const {
+      hasUniqueItems: fieldHasUniqueItems,
       isEmptiable: fieldIsEmptiable,
       isOptional: fieldIsOptional,
       isZeroSignIdentifier: fieldIdentifiesZeroSigns
@@ -33,13 +49,15 @@ class ArrayOfFieldType extends BaseFieldType {
     if (!Array.isArray(value)) return false
     if (value.length === 0) return fieldIsEmptiable
 
-    const determiner = this.$DETERMINER
-    if (determiner instanceof BaseFieldType)
-      return value.every(determiner.isTypeOf.bind(determiner))
+    if (fieldHasUniqueItems) {
+      const fieldContainsDuplicates = fieldIdentifiesZeroSigns
+        ? containsDuplicates(value)
+        : containsDuplicatesZero(value)
+      if (fieldContainsDuplicates) return false
+    }
 
-    return fieldIdentifiesZeroSigns
-      ? value.every(isSameValue.bind(null, determiner))
-      : value.every(isSameValueZero.bind(null, determiner))
+    const determiner = this.$DETERMINER
+    return value.every(determiner.isTypeOf.bind(determiner))
   }
 }
 
