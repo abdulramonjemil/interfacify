@@ -25,6 +25,10 @@ class ObjectOfFieldType extends BaseFieldType {
     return this.$effectAttributeChaining("hasGenericKeys")
   }
 
+  get isGeneric() {
+    return this.$effectAttributeChaining("isGeneric")
+  }
+
   isTypeOf(value) {
     const {
       hasGenericKeys: fieldHasGenericKeys,
