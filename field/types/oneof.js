@@ -24,7 +24,7 @@ class OneOfFieldType extends BaseFieldType {
       )
 
     if (containsDuplicates(determiner))
-      throw new Error("The 'determiner' array cannot contain duplicate types")
+      throw new Error("The 'determiner' array must not contain duplicate types")
 
     super(determiner, attributes)
   }
