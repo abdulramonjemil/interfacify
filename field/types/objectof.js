@@ -1,5 +1,5 @@
-const { isObject } = require("../../lib/helpers")
 const BaseFieldType = require("./base")
+const { isObject } = require("../../lib/helpers")
 
 class ObjectOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = [
