@@ -2,7 +2,11 @@ const { isObject } = require("../../lib/helpers")
 const BaseFieldType = require("./base")
 
 class ObjectOfFieldType extends BaseFieldType {
-  static #ADDITIONAL_ATTRIBUTES = ["hasGenericKeys", "isGeneric"]
+  static #ADDITIONAL_ATTRIBUTES = [
+    "hasGenericKeys",
+    "ignoresEnumerability",
+    "isGeneric"
+  ]
 
   constructor(determiner, attributes) {
     if (!(determiner instanceof BaseFieldType))
@@ -29,6 +33,7 @@ class ObjectOfFieldType extends BaseFieldType {
   isTypeOf(value) {
     const {
       hasGenericKeys: fieldHasGenericKeys,
+      ignoresEnumerability: fieldIgnoresEnumerability,
       isGeneric: fieldIsGeneric,
       isOptional: fieldIsOptional
     } = this.$attributes
@@ -39,18 +44,27 @@ class ObjectOfFieldType extends BaseFieldType {
 
     const determiner = this.$DETERMINER
     const isOfExpectedType = determiner.isTypeOf.bind(determiner)
-    const enumerableStringPropValues = Object.values(value)
+
+    const stringPropValuesToUse = fieldIgnoresEnumerability
+      ? Object.getOwnPropertyNames(value).map((key) => value[key])
+      : Object.values(value)
 
     if (!fieldHasGenericKeys)
-      return enumerableStringPropValues.every(isOfExpectedType)
+      return stringPropValuesToUse.every(isOfExpectedType)
 
-    const enumerableSymbolPropValues = Object.getOwnPropertySymbols(value)
-      .filter((key) => Object.prototype.propertyIsEnumerable.call(value, key))
-      .map((key) => value[key])
+    const symbolPropValues = Object.getOwnPropertySymbols(value).map(
+      (key) => value[key]
+    )
+
+    const symbolPropValuesToUse = fieldIgnoresEnumerability
+      ? symbolPropValues
+      : symbolPropValues.filter((key) =>
+          Object.prototype.propertyIsEnumerable.call(value, key)
+        )
 
     const allEnumerableProps = [
-      ...enumerableStringPropValues,
-      ...enumerableSymbolPropValues
+      ...stringPropValuesToUse,
+      ...symbolPropValuesToUse
     ]
     return allEnumerableProps.every(isOfExpectedType)
   }
