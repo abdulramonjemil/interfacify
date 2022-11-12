@@ -1,6 +1,6 @@
 const BaseFieldType = require("./base")
 const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
-const { containsDuplicates } = require("../../lib/helpers")
+const { containsDuplicates } = require("../../lib/algorithms")
 
 class OneOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = ["isZeroSignIdentifier"]

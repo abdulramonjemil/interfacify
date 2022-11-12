@@ -2,7 +2,7 @@ const BaseFieldType = require("./base")
 const {
   containsDuplicates,
   containsDuplicatesZero
-} = require("../../lib/helpers")
+} = require("../../lib/algorithms")
 
 class ArrayOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = [
