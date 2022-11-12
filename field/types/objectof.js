@@ -47,7 +47,7 @@ class ObjectOfFieldType extends BaseFieldType {
 
     const stringPropValuesToUse = fieldIgnoresEnumerability
       ? Object.getOwnPropertyNames(value).map((key) => value[key])
-      : Object.values(value)
+      : Object.values(value) // Only enumerables
 
     if (!fieldHasGenericKeys)
       return stringPropValuesToUse.every(isOfExpectedType)
