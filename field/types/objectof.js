@@ -39,7 +39,7 @@ class ObjectOfFieldType extends BaseFieldType {
 
     const determiner = this.$DETERMINER
     const isOfExpectedType = determiner.isTypeOf.bind(determiner)
-    const enumerableStringPropValues = Object.values(value) // Enumerables only
+    const enumerableStringPropValues = Object.values(value)
 
     if (!fieldHasGenericKeys)
       return enumerableStringPropValues.every(isOfExpectedType)
