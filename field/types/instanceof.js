@@ -1,7 +1,7 @@
-const FieldType = require("./default")
-const { isObject } = require("../../lib/functions")
+const BaseFieldType = require("./base")
+const { isObject } = require("../../lib/helpers")
 
-class InstanceOfFieldType extends FieldType {
+class InstanceOfFieldType extends BaseFieldType {
   constructor(determiner, attributes) {
     if (!isObject(determiner))
       throw new TypeError("'determiner' must be an object")
@@ -19,9 +19,9 @@ class InstanceOfFieldType extends FieldType {
   }
 
   isTypeOf(value) {
-    const { isOptional: fieldIsOptional } = this.getAttributes()
+    const { isOptional: fieldIsOptional } = this.$attributes
     if (value === undefined) return fieldIsOptional
-    const determiner = this.getDeterminer()
+    const determiner = this.$DETERMINER
     return value instanceof determiner
   }
 }
