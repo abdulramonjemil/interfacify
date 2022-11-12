@@ -2,9 +2,7 @@ const BaseFieldType = require("./base")
 const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 
 class ExactFieldType extends BaseFieldType {
-  static #ADDITIONAL_ATTRIBUTES = [
-    { name: "isZeroSignIdentifier", default: false }
-  ]
+  static #ADDITIONAL_ATTRIBUTES = ["isZeroSignIdentifier"]
 
   constructor(determiner, attributes) {
     if (determiner === undefined)

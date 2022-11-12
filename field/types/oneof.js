@@ -3,9 +3,7 @@ const { isSameValue, isSameValueZero } = require("../../lib/algorithms")
 const { containsDuplicates } = require("../../lib/helpers")
 
 class OneOfFieldType extends BaseFieldType {
-  static #ADDITIONAL_ATTRIBUTES = [
-    { name: "isZeroSignIdentifier", default: false }
-  ]
+  static #ADDITIONAL_ATTRIBUTES = ["isZeroSignIdentifier"]
 
   static getSupportedAttributes() {
     return [
@@ -24,7 +22,7 @@ class OneOfFieldType extends BaseFieldType {
       )
 
     if (containsDuplicates(determiner))
-      throw new Error("The 'determiner' array must not contain duplicate types")
+      throw new Error("The 'determiner' array cannot contain duplicate types")
 
     super(determiner, attributes)
   }

@@ -6,9 +6,9 @@ const {
 
 class ArrayOfFieldType extends BaseFieldType {
   static #ADDITIONAL_ATTRIBUTES = [
-    { name: "hasUniqueItems", default: false },
-    { name: "isEmptiable", default: false },
-    { name: "isZeroSignIdentifier", default: false }
+    "hasUniqueItems",
+    "isEmptiable",
+    "isZeroSignIdentifier"
   ]
 
   constructor(determiner, attributes) {

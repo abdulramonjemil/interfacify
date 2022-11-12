@@ -13,8 +13,6 @@ class PrimitiveFieldType extends BaseFieldType {
     symbol: []
   }
 
-  static #DEFAULT_VALUE_OF_ATTRIBUTES = false
-
   static SUPPORTED_PRIMITIVES = [
     "any",
     "array",
@@ -41,13 +39,7 @@ class PrimitiveFieldType extends BaseFieldType {
     PrimitiveFieldType.#assertPrimitiveSupport(primitiveType)
     const attributesForType =
       PrimitiveFieldType.$ATTRIBUTES_PER_PRIMITIVE[primitiveType]
-    const attributesDefault = PrimitiveFieldType.#DEFAULT_VALUE_OF_ATTRIBUTES
-
-    const attributesDetails = attributesForType.map((attributeName) => ({
-      name: attributeName,
-      default: attributesDefault
-    }))
-    return [...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES, ...attributesDetails]
+    return [...BaseFieldType.DEFAULT_FIELD_ATTRIBUTES, ...attributesForType]
   }
 
   get isFilled() {

@@ -1,11 +1,9 @@
 class BaseFieldType {
+  static $DEFAULT_VALUE_OF_ATTRIBUTES = false
   static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
   static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
 
-  static DEFAULT_FIELD_ATTRIBUTES = [
-    { name: "isOptional", default: false },
-    { name: "isReadonly", default: false }
-  ]
+  static DEFAULT_FIELD_ATTRIBUTES = ["isOptional", "isReadonly"]
 
   $DETERMINER = null
   $attributes = {} // Will be populated in constructor
@@ -66,8 +64,10 @@ class BaseFieldType {
     const determiner = this.$DETERMINER
     const defaultAttributes =
       this.constructor.getSupportedAttributes(determiner)
+    const attributesDefault = BaseFieldType.$DEFAULT_VALUE_OF_ATTRIBUTES
+
     defaultAttributes.forEach((attribute) => {
-      this.$attributes[attribute.name] = attribute.default
+      this.$attributes[attribute] = attributesDefault
     })
   }
 

@@ -2,11 +2,6 @@ const BaseFieldType = require("./base")
 const { isObject } = require("../../lib/helpers")
 
 class CustomFieldType extends BaseFieldType {
-  static #VALIDATOR_TYPES = {
-    SELF: Symbol("SELF"),
-    SIGNATURE: Symbol("SIGNATURE")
-  }
-
   static SIGNATURES = {
     IS_TYPE_OF: Symbol("IS_TYPE_OF")
   }

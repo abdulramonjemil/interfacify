@@ -2,10 +2,7 @@ const { isObject } = require("../../lib/helpers")
 const BaseFieldType = require("./base")
 
 class ObjectOfFieldType extends BaseFieldType {
-  static #ADDITIONAL_ATTRIBUTES = [
-    { name: "hasGenericKeys", default: false },
-    { name: "isGeneric", default: false }
-  ]
+  static #ADDITIONAL_ATTRIBUTES = ["hasGenericKeys", "isGeneric"]
 
   constructor(determiner, attributes) {
     if (!(determiner instanceof BaseFieldType))
