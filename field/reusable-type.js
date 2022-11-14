@@ -70,25 +70,25 @@ class ReusableField {
             /* eslint-disable-next-line no-bitwise */
             selectorForActiveAttributes | selectorForChainedAttribute
 
-          const storedTypeWithNeededAttributesEnabled = attributesMap.get(
+          const storedTypeWithNeededAttributesActivated = attributesMap.get(
             selectorForAllNeededAttributes
           )
 
-          if (storedTypeWithNeededAttributesEnabled !== undefined)
-            return storedTypeWithNeededAttributesEnabled
+          if (storedTypeWithNeededAttributesActivated !== undefined)
+            return storedTypeWithNeededAttributesActivated
 
           /**
            * Simulate attribute chaining with duplicated field type to
            * activate necessary attributes
            */
-          const newTypeWithNeededAttributesEnabled =
+          const newTypeWithNeededAttributesActivated =
             target.duplicate()[property]
-          newTypeWithNeededAttributesEnabled[
+          newTypeWithNeededAttributesActivated[
             signatureForSelectorOfActiveTypeAttributes
           ] = selectorForAllNeededAttributes
 
           const proxiedNeededType = new Proxy(
-            newTypeWithNeededAttributesEnabled,
+            newTypeWithNeededAttributesActivated,
             handler
           )
           attributesMap.set(selectorForAllNeededAttributes, proxiedNeededType)
