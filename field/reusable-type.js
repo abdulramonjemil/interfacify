@@ -4,11 +4,13 @@ const ProxyNormalizer = require("../lib/proxy-normalizer")
 class ReusableField {
   // See comment block below for explanations
   static #SIGNATURES = {
-    ATTRIBUTES_ON_TYPE: Symbol("ATTRIBUTES_ON_TYPE")
+    SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES: Symbol(
+      "SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES"
+    )
   }
 
   // See comment block below for explanations
-  static #TYPE_DEFAULT_ATTRIBUTES_CODE = 0
+  static #SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES = 0
 
   constructor() {
     throw new Error("'ReusableField' is not constructible")
@@ -20,8 +22,8 @@ class ReusableField {
 
     fieldType.resetAttributes()
     const attributesMap = new Map()
-    const signatureForActiveTypeAttributes =
-      ReusableField.#SIGNATURES.ATTRIBUTES_ON_TYPE
+    const signatureForSelectorOfActiveTypeAttributes =
+      ReusableField.#SIGNATURES.SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES
     const supportedAttributes = fieldType.constructor.getSupportedAttributes(
       fieldType.getDeterminer()
     )
@@ -62,7 +64,7 @@ class ReusableField {
 
         if (propertyIsChainedAttribute) {
           const selectorForActiveAttributes =
-            target[signatureForActiveTypeAttributes]
+            target[signatureForSelectorOfActiveTypeAttributes]
 
           const selectorForAllNeededAttributes =
             /* eslint-disable-next-line no-bitwise */
@@ -81,8 +83,9 @@ class ReusableField {
            */
           const newTypeWithNeededAttributesEnabled =
             target.duplicate()[property]
-          newTypeWithNeededAttributesEnabled[signatureForActiveTypeAttributes] =
-            selectorForAllNeededAttributes
+          newTypeWithNeededAttributesEnabled[
+            signatureForSelectorOfActiveTypeAttributes
+          ] = selectorForAllNeededAttributes
 
           const proxiedNeededType = new Proxy(
             newTypeWithNeededAttributesEnabled,
@@ -101,8 +104,8 @@ class ReusableField {
       }
     }
 
-    fieldType[signatureForActiveTypeAttributes] =
-      ReusableField.#TYPE_DEFAULT_ATTRIBUTES_CODE
+    fieldType[signatureForSelectorOfActiveTypeAttributes] =
+      ReusableField.#SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES
     return new Proxy(fieldType, handler)
   }
 }
