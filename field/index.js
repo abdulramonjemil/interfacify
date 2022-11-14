@@ -11,8 +11,8 @@ const {
   Primitive: PrimitiveFieldType
 } = FieldTypes
 
-class Field {
-  static Types = {
+const Field = {
+  Types: {
     // Usable directly -e.g- 'Field.Types.string.isFilled.isOptional'
     any: ReusableFieldType.create(new PrimitiveFieldType("any")),
     array: ReusableFieldType.create(new PrimitiveFieldType("array")),
@@ -32,10 +32,6 @@ class Field {
     objectOf: ReusableFieldType.provision(ObjectOfFieldType),
     oneOf: ReusableFieldType.provision(OneOfFieldType),
     primitive: ReusableFieldType.provision(PrimitiveFieldType)
-  }
-
-  constructor() {
-    throw new Error("'Field' is not constructible")
   }
 }
 
