@@ -26,11 +26,4 @@ Field.Types = {
   symbol: createReusablePrimitiveFieldType("symbol")
 }
 
-Field.Indexes = {
-  string: "string",
-  number: "string",
-  symbol: "string",
-  template: "string"
-}
-
 module.exports = Field
