@@ -1,5 +1,6 @@
 const BaseFieldType = require("./types/base")
 const ProxyNormalizer = require("../lib/proxy-normalizer")
+const { isExtender } = require("../lib/helpers")
 
 class ReusableFieldType {
   // See comment block below for explanations
@@ -21,7 +22,7 @@ class ReusableFieldType {
       throw new Error("'fieldType' must be an instance of 'BaseFieldType'")
 
     fieldType.resetAttributes()
-    const fieldTypesPerAttributesSelector = new Map()
+    const fieldTypePerSelectorOfAttributes = new Map()
     const signatureForSelectorOfActiveTypeAttributes =
       ReusableFieldType.#SIGNATURES.SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES
 
@@ -72,7 +73,7 @@ class ReusableFieldType {
             selectorForCurrentlyActiveAttributes | selectorForChainedAttribute
 
           const storedTypeWithNeededAttributesActivated =
-            fieldTypesPerAttributesSelector.get(selectorForAllNeededAttributes)
+            fieldTypePerSelectorOfAttributes.get(selectorForAllNeededAttributes)
 
           if (storedTypeWithNeededAttributesActivated !== undefined)
             return storedTypeWithNeededAttributesActivated
@@ -92,7 +93,7 @@ class ReusableFieldType {
             handler
           )
 
-          fieldTypesPerAttributesSelector.set(
+          fieldTypePerSelectorOfAttributes.set(
             selectorForAllNeededAttributes,
             proxiedVersionOfNeededType
           )
@@ -111,6 +112,27 @@ class ReusableFieldType {
     fieldType[signatureForSelectorOfActiveTypeAttributes] =
       ReusableFieldType.#SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES
     return new Proxy(fieldType, handler)
+  }
+
+  static provision(FieldTypeConstructor) {
+    if (!isExtender(FieldTypeConstructor, BaseFieldType))
+      throw new TypeError("'FieldTypeConstructor' must extend 'BaseFieldType'")
+    const fieldTypePerDeterminer = new Map()
+
+    return function reusableTypeConstructor(determiner) {
+      const storedReusableTypeForDeterminer =
+        fieldTypePerDeterminer.get(determiner)
+
+      if (storedReusableTypeForDeterminer !== undefined)
+        return storedReusableTypeForDeterminer
+
+      const reusableTypeForDeterminer = ReusableFieldType.create(
+        new FieldTypeConstructor(determiner)
+      )
+
+      fieldTypePerDeterminer.set(determiner, reusableTypeForDeterminer)
+      return reusableTypeForDeterminer
+    }
   }
 }
 
