@@ -2,29 +2,25 @@ const BaseFieldType = require("./types/base")
 const ProxyNormalizer = require("../lib/proxy-normalizer")
 const { isExtender } = require("../lib/helpers")
 
-class ReusableFieldType {
+const ReusableFieldType = {
   // See comment block below for explanations
-  static #SIGNATURES = {
+  $SIGNATURES: {
     SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES: Symbol(
       "SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES"
     )
-  }
+  },
 
   // See comment block below for explanations
-  static #SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES = 0
+  $SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES: 0,
 
-  constructor() {
-    throw new Error("'ReusableFieldType' is not constructible")
-  }
-
-  static create(fieldType) {
+  create(fieldType) {
     if (!(fieldType instanceof BaseFieldType))
       throw new Error("'fieldType' must be an instance of 'BaseFieldType'")
 
     fieldType.resetAttributes()
     const fieldTypePerSelectorOfAttributes = new Map()
     const signatureForSelectorOfActiveTypeAttributes =
-      ReusableFieldType.#SIGNATURES.SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES
+      ReusableFieldType.$SIGNATURES.SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES
 
     const supportedAttributes = fieldType.constructor.getSupportedAttributes(
       fieldType.getDeterminer()
@@ -110,11 +106,11 @@ class ReusableFieldType {
     }
 
     fieldType[signatureForSelectorOfActiveTypeAttributes] =
-      ReusableFieldType.#SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES
+      ReusableFieldType.$SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES
     return new Proxy(fieldType, handler)
-  }
+  },
 
-  static provision(FieldTypeConstructor) {
+  provision(FieldTypeConstructor) {
     if (!isExtender(FieldTypeConstructor, BaseFieldType))
       throw new TypeError("'FieldTypeConstructor' must extend 'BaseFieldType'")
     const fieldTypePerDeterminer = new Map()
