@@ -1,7 +1,7 @@
 const BaseFieldType = require("./types/base")
 const ProxyNormalizer = require("../lib/proxy-normalizer")
 
-class ReusableField {
+class ReusableFieldType {
   // See comment block below for explanations
   static #SIGNATURES = {
     SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES: Symbol(
@@ -13,17 +13,18 @@ class ReusableField {
   static #SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES = 0
 
   constructor() {
-    throw new Error("'ReusableField' is not constructible")
+    throw new Error("'ReusableFieldType' is not constructible")
   }
 
-  static createType(fieldType) {
+  static create(fieldType) {
     if (!(fieldType instanceof BaseFieldType))
       throw new Error("'fieldType' must be an instance of 'BaseFieldType'")
 
     fieldType.resetAttributes()
-    const attributesMap = new Map()
+    const fieldTypesPerAttributesSelector = new Map()
     const signatureForSelectorOfActiveTypeAttributes =
-      ReusableField.#SIGNATURES.SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES
+      ReusableFieldType.#SIGNATURES.SELECTOR_FOR_ACTIVE_TYPE_ATTRIBUTES
+
     const supportedAttributes = fieldType.constructor.getSupportedAttributes(
       fieldType.getDeterminer()
     )
@@ -63,16 +64,15 @@ class ReusableField {
           selectorForChainedAttribute !== undefined
 
         if (propertyIsChainedAttribute) {
-          const selectorForActiveAttributes =
+          const selectorForCurrentlyActiveAttributes =
             target[signatureForSelectorOfActiveTypeAttributes]
 
           const selectorForAllNeededAttributes =
             /* eslint-disable-next-line no-bitwise */
-            selectorForActiveAttributes | selectorForChainedAttribute
+            selectorForCurrentlyActiveAttributes | selectorForChainedAttribute
 
-          const storedTypeWithNeededAttributesActivated = attributesMap.get(
-            selectorForAllNeededAttributes
-          )
+          const storedTypeWithNeededAttributesActivated =
+            fieldTypesPerAttributesSelector.get(selectorForAllNeededAttributes)
 
           if (storedTypeWithNeededAttributesActivated !== undefined)
             return storedTypeWithNeededAttributesActivated
@@ -87,12 +87,16 @@ class ReusableField {
             signatureForSelectorOfActiveTypeAttributes
           ] = selectorForAllNeededAttributes
 
-          const proxiedNeededType = new Proxy(
+          const proxiedVersionOfNeededType = new Proxy(
             newTypeWithNeededAttributesActivated,
             handler
           )
-          attributesMap.set(selectorForAllNeededAttributes, proxiedNeededType)
-          return proxiedNeededType
+
+          fieldTypesPerAttributesSelector.set(
+            selectorForAllNeededAttributes,
+            proxiedVersionOfNeededType
+          )
+          return proxiedVersionOfNeededType
         }
 
         /* eslint-disable-next-line prefer-rest-params */
@@ -105,9 +109,9 @@ class ReusableField {
     }
 
     fieldType[signatureForSelectorOfActiveTypeAttributes] =
-      ReusableField.#SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES
+      ReusableFieldType.#SELECTOR_FOR_DEFAULT_ACTIVE_TYPE_ATTRIBUTES
     return new Proxy(fieldType, handler)
   }
 }
 
-module.exports = ReusableField
+module.exports = ReusableFieldType
