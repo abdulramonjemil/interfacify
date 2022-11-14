@@ -1,36 +1,38 @@
+const ReusableFieldType = require("./reusable-type")
 const FieldTypes = require("./types")
 
-function createReusablePrimitiveFieldType(type) {
-  const createdFieldType = new FieldTypes.Primitive(type)
+const {
+  ArrayOf: ArrayOfFieldType,
+  Custom: CustomFieldType,
+  Exact: ExactFieldType,
+  InstanceOf: InstanceOfFieldType,
+  ObjectOf: ObjectOfFieldType,
+  OneOf: OneOfFieldType,
+  Primitive: PrimitiveFieldType
+} = FieldTypes
 
-  return new Proxy(createdFieldType, {
-    // get(target, property) {
-    //   const propertyIsFieldTypeAttribute =
-    //     SORTED_FIELD_ATTRIBUTES.includes(property)
-    //   if (propertyIsFieldTypeAttribute) {
-    //     assertEarlyAccessOfFieldTypeAttribute(target, property)
-    //   }
-    // }
-  })
-}
+const Field = {
+  Types: {
+    // Usable directly -e.g- 'Field.Types.string.isFilled.isOptional'
+    any: ReusableFieldType.create(new PrimitiveFieldType("any")),
+    array: ReusableFieldType.create(new PrimitiveFieldType("array")),
+    bigint: ReusableFieldType.create(new PrimitiveFieldType("bigint")),
+    boolean: ReusableFieldType.create(new PrimitiveFieldType("boolean")),
+    function: ReusableFieldType.create(new PrimitiveFieldType("function")),
+    number: ReusableFieldType.create(new PrimitiveFieldType("number")),
+    object: ReusableFieldType.create(new PrimitiveFieldType("object")),
+    string: ReusableFieldType.create(new PrimitiveFieldType("string")),
+    symbol: ReusableFieldType.create(new PrimitiveFieldType("symbol")),
 
-const Field = {}
-
-Field.Types = {
-  bigint: createReusablePrimitiveFieldType("bigint"),
-  boolean: createReusablePrimitiveFieldType("boolean"),
-  function: createReusablePrimitiveFieldType("function"),
-  number: createReusablePrimitiveFieldType("number"),
-  object: createReusablePrimitiveFieldType("object"),
-  string: createReusablePrimitiveFieldType("string"),
-  symbol: createReusablePrimitiveFieldType("symbol")
-}
-
-Field.Indexes = {
-  string: "string",
-  number: "string",
-  symbol: "string",
-  template: "string"
+    // Called as functions -e.g- 'Field.Types.arrayOf(Field.Types.string)'
+    arrayOf: ReusableFieldType.provision(ArrayOfFieldType),
+    custom: ReusableFieldType.provision(CustomFieldType),
+    exact: ReusableFieldType.provision(ExactFieldType),
+    instanceOf: ReusableFieldType.provision(InstanceOfFieldType),
+    objectOf: ReusableFieldType.provision(ObjectOfFieldType),
+    oneOf: ReusableFieldType.provision(OneOfFieldType),
+    primitive: ReusableFieldType.provision(PrimitiveFieldType)
+  }
 }
 
 module.exports = Field

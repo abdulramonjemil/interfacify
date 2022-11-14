@@ -1,7 +1,7 @@
 class BaseFieldType {
-  static $DEFAULT_VALUE_OF_ATTRIBUTES = false
-  static $EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
-  static $VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
+  static DEFAULT_VALUE_OF_ATTRIBUTES = false
+  static EXPECTED_TYPE_OF_ATTRIBUTES = "boolean"
+  static VALUE_OF_ATTRIBUTES_AFTER_CHAINING = true
 
   static DEFAULT_FIELD_ATTRIBUTES = ["isOptional", "isReadonly"]
 
@@ -23,7 +23,7 @@ class BaseFieldType {
   }
 
   static $assertAttributeValueValidity(value) {
-    const expectedType = BaseFieldType.$EXPECTED_TYPE_OF_ATTRIBUTES
+    const expectedType = BaseFieldType.EXPECTED_TYPE_OF_ATTRIBUTES
     if (typeof value !== expectedType)
       throw new Error(`Attributes must be of '${expectedType}' type`)
   }
@@ -49,14 +49,14 @@ class BaseFieldType {
 
   $assertEffectivenessOfChaining(attributeName) {
     const attributeValue = this.$attributes[attributeName]
-    if (attributeValue === BaseFieldType.$VALUE_OF_ATTRIBUTES_AFTER_CHAINING)
+    if (attributeValue === BaseFieldType.VALUE_OF_ATTRIBUTES_AFTER_CHAINING)
       throw new Error(`Chaining the attribute '${attributeName}' has no effect`)
   }
 
   $effectAttributeChaining(attributeName) {
     this.$assertEffectivenessOfChaining(attributeName)
     this.$attributes[attributeName] =
-      BaseFieldType.$VALUE_OF_ATTRIBUTES_AFTER_CHAINING
+      BaseFieldType.VALUE_OF_ATTRIBUTES_AFTER_CHAINING
     return this
   }
 
@@ -64,7 +64,7 @@ class BaseFieldType {
     const determiner = this.$DETERMINER
     const defaultAttributes =
       this.constructor.getSupportedAttributes(determiner)
-    const attributesDefault = BaseFieldType.$DEFAULT_VALUE_OF_ATTRIBUTES
+    const attributesDefault = BaseFieldType.DEFAULT_VALUE_OF_ATTRIBUTES
 
     defaultAttributes.forEach((attribute) => {
       this.$attributes[attribute] = attributesDefault

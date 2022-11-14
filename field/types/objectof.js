@@ -26,6 +26,10 @@ class ObjectOfFieldType extends BaseFieldType {
     return this.$effectAttributeChaining("hasGenericKeys")
   }
 
+  get ignoresEnumerability() {
+    return this.$effectAttributeChaining("ignoresEnumerability")
+  }
+
   get isGeneric() {
     return this.$effectAttributeChaining("isGeneric")
   }
